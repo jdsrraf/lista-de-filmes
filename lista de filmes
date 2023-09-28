@@ -1,3 +1,35 @@
+import { AsyncStorage } from 'react-native';
+const addMovie = async () => {
+  if (newMovie.title && newMovie.genre && newMovie.rating) {
+    const movieToAdd = {
+      title: newMovie.title,
+      genre: newMovie.genre,
+      rating: newMovie.rating,
+    };
+
+    try {
+      // Lê os filmes existentes em AsyncStorage
+      const existingMovies = await AsyncStorage.getItem('movies');
+
+      // Converte os filmes em JSON para um array
+      const parsedMovies = existingMovies ? JSON.parse(existingMovies) : [];
+
+      // Adiciona o novo filme ao array de filmes
+      parsedMovies.push(movieToAdd);
+
+      // Salva o array atualizado de filmes em AsyncStorage
+      await AsyncStorage.setItem('movies', JSON.stringify(parsedMovies));
+
+      // Atualiza o estado com a nova lista de filmes
+      setMovies(parsedMovies);
+
+      // Limpa os campos de entrada
+      setNewMovie({ title: '', genre: '', rating: '' });
+    } catch (error) {
+      console.error('Erro ao adicionar filme:', error);
+    }
+  }
+};
 import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, Button, StyleSheet } from 'react-native';
 
@@ -99,6 +131,10 @@ const styles = StyleSheet.create({
   },
   movieInfo: {
     color: '#333', 
+  },
+});
+
+export default MovieList;
   },
 });
 
